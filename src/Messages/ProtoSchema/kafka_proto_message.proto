@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message KafkaProtoMessage {
+    string TypeName = 1;
+    string TypeVersion = 2;
+    string Data = 3;
+}

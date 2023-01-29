@@ -1,0 +1,19 @@
+{
+  "namespace": "confluent.io.examples.serialization.avro",
+  "name": "KafkaAvroMessage",
+  "type": "record",
+  "fields": [
+    {
+      "name": "TypeName",
+      "type": "string"
+    },
+    {
+      "name": "TypeVersion",
+      "type": "string"
+    },
+    {
+      "name": "Data",
+      "type": [ "string", "null" ]
+    }
+  ]
+}

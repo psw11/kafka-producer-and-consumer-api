@@ -1,0 +1,6 @@
+.vs/
+src/bin/
+src/obj/
+cluster/volumes/
+src/appsettings *.json
+src/Kafka.sln

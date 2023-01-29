@@ -1,0 +1,176 @@
+version: "2"
+
+networks: 
+  default: 
+    external: 
+      name: external-network
+
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.3.0
+    user: root
+    cpus: 0.5
+    mem_limit: 512m
+    volumes:
+      - ./volumes/zookeeper/secrets:/etc/zookeeper/secrets:rw
+      - ./volumes/zookeeper/data:/var/lib/zookeeper/data:rw
+      - ./volumes/zookeeper/log:/var/lib/zookeeper/log:rw
+    ports:
+      - 2181:2181
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+
+  zookeeper-ui:
+    container_name: zookeeper-ui
+    image: elkozmon/zoonavigator:1.1.2
+    cpus: 0.1
+    mem_limit: 512m
+    ports:
+      - 2182:9000
+    restart: always
+    depends_on:
+      - zookeeper
+
+  kafka0:
+    container_name: kafka0
+    image: cp-kafka-with-metrics:7.3.0
+    user: root
+    cpus: 1
+    mem_limit: 1g
+    volumes:
+      - ./volumes/kafka0/secrets:/etc/kafka/secrets:rw
+      - ./volumes/kafka0/data:/var/lib/kafka/data:rw
+    ports:
+      - 9092:9092
+      - 19092:19092
+    environment:
+      - KAFKA_BROKER_ID=0
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka0:29092,EXTERNAL://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+      - KAFKA_REPLICA_LAG_TIME_MAX_MS=30000
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_OPTS=-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.15.0.jar=19092:/opt/prometheus/kafka_broker.yml
+    restart: always
+    depends_on:
+      - zookeeper
+
+  kafka1:
+    container_name: kafka1
+    image: cp-kafka-with-metrics:7.3.0
+    user: root
+    cpus: 1
+    mem_limit: 1g
+    volumes:
+      - ./volumes/kafka1/secrets:/etc/kafka/secrets:rw
+      - ./volumes/kafka1/data:/var/lib/kafka/data:rw
+    ports:
+      - 9093:9093
+      - 19093:19093
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29093,EXTERNAL://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka1:29093,EXTERNAL://localhost:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+      - KAFKA_REPLICA_LAG_TIME_MAX_MS=30000
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_OPTS=-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.15.0.jar=19093:/opt/prometheus/kafka_broker.yml
+    restart: always
+    depends_on:
+      - zookeeper
+
+  kafka2:
+    container_name: kafka2
+    image: cp-kafka-with-metrics:7.3.0
+    user: root
+    cpus: 1
+    mem_limit: 1g
+    volumes:
+      - ./volumes/kafka2/secrets:/etc/kafka/secrets:rw
+      - ./volumes/kafka2/data:/var/lib/kafka/data:rw
+    ports:
+      - 9094:9094
+      - 19094:19094
+    environment:
+      - KAFKA_BROKER_ID=2
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29094,EXTERNAL://0.0.0.0:9094
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka2:29094,EXTERNAL://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+      - KAFKA_REPLICA_LAG_TIME_MAX_MS=30000
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_OPTS=-javaagent:/opt/prometheus/jmx_prometheus_javaagent-0.15.0.jar=19094:/opt/prometheus/kafka_broker.yml
+    restart: always
+    depends_on:
+      - zookeeper
+
+  schema-registry:
+    container_name: schema-registry
+    image: confluentinc/cp-schema-registry:7.3.0
+    user: root
+    cpus: 0.5
+    mem_limit: 512m
+    volumes:
+      - "./volumes/schema-registry/secrets:/etc/schema-registry/secrets:rw"
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092,PLAINTEXT://kafka1:29093,PLAINTEXT://kafka2:29094
+      SCHEMA_REGISTRY_KAFKASTORE_TIMEOUT_MS: 500
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 3
+    restart: always
+    depends_on:
+      - kafka0
+      - kafka1
+      - kafka2
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:5c723d9b4491019bc6de01e3746b5b86d70f0560
+    cpus: 0.1
+    mem_limit: 512m
+    ports:
+      - 9095:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=kafka0
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka0:29092
+      - KAFKA_CLUSTERS_0_SCHEMAREGISTRY=http://schema-registry:8081
+      - KAFKA_CLUSTERS_1_NAME=kafka1
+      - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=kafka1:29093
+      - KAFKA_CLUSTERS_1_SCHEMAREGISTRY=http://schema-registry:8081
+      - KAFKA_CLUSTERS_2_NAME=kafka2
+      - KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS=kafka2:29094
+      - KAFKA_CLUSTERS_2_SCHEMAREGISTRY=http://schema-registry:8081
+    restart: always
+    depends_on:
+      - kafka0
+      - kafka1
+      - kafka2
+      - schema-registry
