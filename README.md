@@ -2,8 +2,8 @@ That is an example to use the Kafka producer and consumer API. \
 To start one you can do some steps below. 
 
 #### Start Kafka cluster
-- Build kafka image by running a file ".\cluster\kafka-image\build-image.bat"
-- Start or restart Kafka cluster by a file ".\cluster\restart.bat"
+- Build kafka image by running the file ".\cluster\kafka-image\build-image.bat"
+- Start or restart Kafka cluster by running the file ".\cluster\restart.bat"
 - Wait for start the containers. It takes about 10 seconds
 
 #### Open web UI to see cluster data
@@ -11,8 +11,8 @@ To start one you can do some steps below.
 - Zookeeper viewer http://localhost:2182/ (connection string "zookeeper:2181")
 
 #### Use examples
-- Open solution file ".\src\KafkaExamples.sln" in the VisualStudio
+- Open project file ".\src\Kafka.csproj" in the VisualStudio
 
 #### Stop Kafka cluster
-- Run file ".\cluster\stop.bat"
-- Remove manually a folder ".\cluster\volumes\"
+- Run the file ".\cluster\stop.bat"
+- Remove manually folder ".\cluster\volumes\"
