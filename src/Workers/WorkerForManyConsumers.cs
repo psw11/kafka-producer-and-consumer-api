@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
-using Kafka.CustomConfig;
 using Kafka.CustomApi;
 
 namespace Kafka.Workers
@@ -26,7 +25,7 @@ namespace Kafka.Workers
 
         public void RunProduce()
         {
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") ?? "";
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "3";
 
             Task.Run(async () =>
             {
@@ -47,8 +46,8 @@ namespace Kafka.Workers
 
         public void RunAutoConsume()
         {
-            var groupId = _configuration.GetValue<string>("KafkaAutoCommit:ConsumerSettings:group.id") ?? "";
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") ?? "";
+            var groupId = _configuration.GetValue<string>("KafkaAutoCommit:ConsumerSettings:group.id");
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "3";
 
             if (!_kafkaAutoConsumer.ExistsTopic(topicName))
             {
@@ -76,8 +75,8 @@ namespace Kafka.Workers
 
         public void RunManualConsume()
         {
-            var groupId = _configuration.GetValue<string>("KafkaManualCommit:ConsumerSettings:group.id") ?? "";
-            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName") ?? "";
+            var groupId = _configuration.GetValue<string>("KafkaManualCommit:ConsumerSettings:group.id");
+            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName") + "3";
 
             if (!_kafkaManualConsumer.ExistsTopic(topicName))
             {

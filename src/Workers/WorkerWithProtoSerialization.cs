@@ -27,7 +27,7 @@ namespace Kafka.Workers
 
         public void RunProduce()
         {
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "8";
 
             Task.Run(async () =>
             {
@@ -62,7 +62,7 @@ namespace Kafka.Workers
 
         public void RunConsume()
         {
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "8";
 
             if (!_kafkaConsumer.ExistsTopic(topicName))
             {

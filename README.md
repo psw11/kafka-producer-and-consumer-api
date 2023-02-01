@@ -4,7 +4,7 @@ To start one you can do some steps below.
 #### Start Kafka cluster
 - Build kafka image by running the file ".\cluster\kafka-image\build-image.bat"
 - Start or restart Kafka cluster by running the file ".\cluster\restart.bat"
-- Wait for start the containers. It takes about 10 seconds
+- Wait for start the containers. It takes about 20 seconds
 
 #### Open web UI to see cluster data
 - Kafka viewer http://localhost:9095/

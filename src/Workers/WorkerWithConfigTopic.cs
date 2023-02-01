@@ -1,7 +1,6 @@
 ﻿using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.Extensions.Configuration;
-using Kafka.CustomConfig;
 using Kafka.CustomApi;
 
 namespace Kafka.Workers
@@ -24,7 +23,7 @@ namespace Kafka.Workers
 
         public void RunProduce()
         {
-            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName") + "5";
 
             Task.Run(async () =>
             {
@@ -40,7 +39,7 @@ namespace Kafka.Workers
                                 { "min.insync.replicas", "2" },                 // Минимальное количество синхронных реплик раздела
                                 { "unclean.leader.election.enable", "false" },  // Выбор рассинхронизированной реплики в качестве ведущей
 
-                                { "segment.bytes", "100024" },                  // (100 Кб) Определяет максимальный размер файла сегмента журнала
+                                { "segment.bytes", "102400" },                  // (100 Кб) Определяет максимальный размер файла сегмента журнала
                                 { "cleanup.policy", "delete" },                 // Включает удаление старых сегментов журнала
                                 { "retention.bytes", "-1" },                    // Определяет размер партиции, после превышения которого следует начать удалять сообщения
                                 { "retention.ms", "600000" },                   // (10 минут) Определяет максимальное время хранения сегментов журнала, по истечении которого расширение файлов изменится на *.deleted
@@ -64,7 +63,7 @@ namespace Kafka.Workers
 
         public void RunConsume()
         {
-            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaManualCommit:Topics:RequestTopicName") + "5";
 
             if (!_kafkaConsumer.ExistsTopic(topicName))
             {

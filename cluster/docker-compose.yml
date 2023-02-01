@@ -28,8 +28,8 @@ services:
   zookeeper-ui:
     container_name: zookeeper-ui
     image: elkozmon/zoonavigator:1.1.2
-    cpus: 0.1
-    mem_limit: 512m
+    cpus: 0.5
+    mem_limit: 1g
     ports:
       - 2182:9000
     restart: always
@@ -154,8 +154,8 @@ services:
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:5c723d9b4491019bc6de01e3746b5b86d70f0560
-    cpus: 0.1
-    mem_limit: 512m
+    cpus: 0.5
+    mem_limit: 1g
     ports:
       - 9095:8080
     environment:

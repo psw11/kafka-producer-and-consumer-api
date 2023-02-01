@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
-using Kafka.CustomConfig;
 using Kafka.CustomApi;
 
 namespace Kafka.Workers
@@ -23,7 +22,7 @@ namespace Kafka.Workers
 
         public void RunProduce()
         {
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "1";
 
             Task.Run(async () =>
             {
@@ -44,7 +43,7 @@ namespace Kafka.Workers
 
         public void RunConsume()
         {
-            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName");
+            var topicName = _configuration.GetValue<string>("KafkaAutoCommit:Topics:RequestTopicName") + "1";
 
             if (!_kafkaConsumer.ExistsTopic(topicName))
             {
